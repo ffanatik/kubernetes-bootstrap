@@ -1,0 +1,32 @@
+---
+- name: Add an apt signing key for Docker repo.
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    keyring: /etc/apt/keyrings/docker.gpg
+    state: present
+
+- name: Enable Docker apt repo for Ubuntu.
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+    filename: docker-repo
+    state: present
+
+- name: Install containerd from Docker repo.
+  ansible.builtin.apt:
+    name: containerd.io
+    state: present
+    update_cache: true
+
+- name: Generate default containerd configuration file if it does not exist
+  ansible.builtin.shell:
+    cmd: containerd config default > /etc/containerd/config.toml
+    creates: /etc/containerd/config.toml
+  register: containerd_config
+  run_once: true
+
+- name: Replace SystemdCgroup = false with SystemdCgroup = true in config.toml
+  ansible.builtin.lineinfile:
+    path: /etc/containerd/config.toml
+    regexp: "^SystemdCgroup = false"
+    line: "SystemdCgroup = true"
+  notify: Restart containerd

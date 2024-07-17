@@ -1,0 +1,22 @@
+---
+- name: Tasks to prepare node configuration
+  ansible.builtin.include_tasks: prepare_hosts.yaml
+
+- name: Tasks to host security hardering
+  ansible.builtin.include_tasks: host_hardering.yaml
+
+- name: Tasks to disable swap, load kernel modules, sysctl settings on each node
+  ansible.builtin.include_tasks: prepare_k8s.yaml
+
+- name: Tasks to configure timezone and ntp on nodes
+  ansible.builtin.include_tasks: configure_timezone_ntp.yaml
+
+- name: Tasks to configure hosts file on each node
+  ansible.builtin.include_tasks: configure_etc_host_file.yaml
+
+- name: Tasks to configure containerd as CNI
+  ansible.builtin.include_tasks: install_containerd.yaml
+  when: cni == "containerd"
+
+- name: Tasks to install kubernetes packages
+  ansible.builtin.include_tasks: install_k8s_packages.yaml

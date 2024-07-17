@@ -1,0 +1,11 @@
+---
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    update_cache: true
+    upgrade: dist
+
+- name: Install prepare packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+  loop:
+    - "{{ kubernetes_bootstrap_basic_packages }}"

@@ -1,0 +1,47 @@
+---
+- name: Add an Kubernetes repo signing key
+  ansible.builtin.apt_key:
+    url: https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/Release.key
+    keyring: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    state: present
+
+- name: Enable Kubernetes apt repo
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/deb/ /"
+    filename: kubernetes
+    state: present
+
+- name: Install Kubernetes packages on Controlplane nodes
+  ansible.builtin.apt:
+    name: [kubeadm, kubelet, kubectl]
+    state: present
+    update_cache: true
+  when: '"control-plane" in inventory_hostname'
+
+- name: Install Kubernetes packages on Worker nodes
+  ansible.builtin.apt:
+    name: [kubeadm, kubelet]
+    state: present
+    update_cache: true
+  when: '"worker" in inventory_hostname'
+
+- name: Hold Kubernetes packages
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - kubelet
+    - kubeadm
+
+- name: Hold Kubernetes kubectl package
+  ansible.builtin.dpkg_selections:
+    name: kubectl
+    selection: hold
+  when: '"controlplane" in inventory_hostname'
+
+- name: Enable kubelet service
+  ansible.builtin.systemd_service:
+    name: kubelet
+    daemon-reload: true
+    enabled: true
+    state: started

@@ -1,0 +1,16 @@
+---
+- name: Configure timezone on nodes
+  community.general.timezone:
+    name: "{{ timezone }}"
+
+- name: Ensure chrony package is installed
+  ansible.builtin.package:
+    name: chrony
+    state: present
+  notify: Synchronize time
+
+- name: Enable chronyd service at startup
+  ansible.builtin.service:
+    name: chronyd
+    state: started
+    enabled: true

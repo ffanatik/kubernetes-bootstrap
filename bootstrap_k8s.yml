@@ -1,0 +1,10 @@
+---
+- name: Prepare Kubernetes Nodes for cluster bootstrapping
+  hosts: controlplane, worker
+  become: true
+  vars:
+    k8s_version: "1.30"
+    timezone: "Europe/Belgrade"
+    cni: containerd
+  roles:
+    - kubernetes_bootstrap
