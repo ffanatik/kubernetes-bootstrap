@@ -5,6 +5,6 @@
   vars:
     k8s_version: "1.30"
     timezone: "Europe/Belgrade"
-    cni: containerd
+    cri: containerd
   roles:
     - kubernetes_bootstrap

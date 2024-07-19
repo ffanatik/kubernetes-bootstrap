@@ -16,7 +16,7 @@
 
 - name: Tasks to configure containerd as CNI
   ansible.builtin.include_tasks: install_containerd.yaml
-  when: cni == "containerd"
+  when: cri == "containerd"
 
 - name: Tasks to install kubernetes packages
   ansible.builtin.include_tasks: install_k8s_packages.yaml
