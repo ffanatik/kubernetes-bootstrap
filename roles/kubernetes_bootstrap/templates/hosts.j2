@@ -2,7 +2,7 @@
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 
 {% for group in ['controlplane', 'worker'] %}
-  {% for host in groups[group] %}
-    {{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }} {{ hostvars[host]['ansible_facts']['fqdn'] }} {{ hostvars[host]['ansible_facts']['hostname'] }}
-  {% endfor %}
+{% for host in groups[group] %}
+{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }} {{ hostvars[host]['ansible_facts']['fqdn'] }} {{ hostvars[host]['ansible_facts']['hostname'] }}
+{% endfor %}
 {% endfor %}
