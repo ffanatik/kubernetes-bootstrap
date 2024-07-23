@@ -37,7 +37,7 @@
   ansible.builtin.dpkg_selections:
     name: kubectl
     selection: hold
-  when: '"controlplane" in inventory_hostname'
+  when: '"control-plane" in inventory_hostname'
 
 - name: Enable kubelet service
   ansible.builtin.systemd_service:

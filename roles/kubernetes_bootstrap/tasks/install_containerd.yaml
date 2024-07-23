@@ -17,16 +17,9 @@
     state: present
     update_cache: true
 
-- name: Generate default containerd configuration file if it does not exist
-  ansible.builtin.shell:
-    cmd: containerd config default > /etc/containerd/config.toml
-    creates: /etc/containerd/config.toml
-  register: containerd_config
-  run_once: true
-
-- name: Replace SystemdCgroup = false with SystemdCgroup = true in config.toml
-  ansible.builtin.lineinfile:
-    path: /etc/containerd/config.toml
-    regexp: "^SystemdCgroup = false"
-    line: "SystemdCgroup = true"
+- name: Create containerd configuration
+  ansible.builtin.template:
+    src: containerd.j2
+    dest: /etc/containerd/config.toml
+    mode: "0644"
   notify: Restart containerd
